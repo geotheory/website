@@ -30,6 +30,7 @@ jobs:
         run: |
           rm -rf content
           mkdir content
+          mkdir content/pages
           cp -r wiki/* content/
           if [ -f content/Home.md ]; then mv content/Home.md content/_index.md; fi
 
@@ -37,8 +38,8 @@ jobs:
         run: |
           # Iterate over all .md files in content/ recursively
           find content/ -type f -name "*.md" | while read -r file; do
-          # Skip files that already have front matter
-          if ! head -n 1 "$file" | grep -qE '^\+\+\+|^---'; then
+            # Skip files that already have front matter
+            if ! head -n 1 "$file" | grep -qE '^\+\+\+|^---'; then
               # Derive title from filename (strip path and extension)
               filename=$(basename "$file" .md)
               title=$filename #"${filename//_/ }"  # replace underscores with spaces if desired
@@ -53,8 +54,16 @@ jobs:
                   cat "$file"
               } > "$tmp"
               mv "$tmp" "$file"
-          fi
+            fi
+            # move pages to pages folder
+            if ! [[ $file =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2} ]]; then
+              pagesfile="pages/$file"
+              mv "$file" "$pagesfile"
+            fi
           done
+      
+      - name: Install theme
+        run: git clone https://github.com/evjrob/zola-folio themes/zola-folio
 
       - name: Build site
         run: zola build

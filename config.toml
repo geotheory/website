@@ -1,6 +1,8 @@
 # The URL the site will be built for
 base_url = "https://geotheory.github.io/website"
-title = "Website Wiki"
+title = "*spoon"
+
+theme = "zola-folio"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
@@ -15,3 +17,8 @@ highlight_code = false
 
 [extra]
 # Put all your custom variables here
+
+menu_items = [
+    {name = "home", url = "/pages/home"},
+    {name = "about", url = "/pages/about"}
+]
