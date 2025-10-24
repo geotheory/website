@@ -33,6 +33,29 @@ jobs:
           cp -r wiki/* content/
           if [ -f content/Home.md ]; then mv content/Home.md content/_index.md; fi
 
+      - name: Format headers
+        run: |
+          # Iterate over all .md files in content/ recursively
+          find content/ -type f -name "*.md" | while read -r file; do
+          # Skip files that already have front matter
+          if ! head -n 1 "$file" | grep -qE '^\+\+\+|^---'; then
+              # Derive title from filename (strip path and extension)
+              filename=$(basename "$file" .md)
+              title=$filename #"${filename//_/ }"  # replace underscores with spaces if desired
+
+              # Prepend TOML front matter
+              tmp=$(mktemp)
+              {
+                  echo "+++"
+                  echo "title = \"$title\""
+                  echo "+++"
+                  echo ""
+                  cat "$file"
+              } > "$tmp"
+              mv "$tmp" "$file"
+          fi
+          done
+
       - name: Build site
         run: zola build
 
