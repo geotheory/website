@@ -57,7 +57,7 @@ jobs:
             fi
             # move pages to pages folder
             if ! [[ $file =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2} ]]; then
-              pagesfile="pages/$file"
+              pagesfile="${file/content\//content\/pages\/}"
               mv "$file" "$pagesfile"
             fi
           done
